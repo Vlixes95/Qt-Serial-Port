@@ -67,29 +67,24 @@ void SerialPortWidget::messageReceived ( ) {
 
         if ( receiveMSGPack.getCommand( ) == PRINT_COMMAND ) {
 
-            std::set < std::string > driveContent;
-            int element = 0;
-
-            // TODO: smart pointer
-            // TODO: recursive function with find
             int j = 0;
             int size = 0;
-            for ( int i = 0; i < receiveMSGPack.getContent( ).length( ); ++i ) {
-                if ( receiveMSGPack.getContent( )[i] == ';' ) {
+            int element = 0;
+            std::set < std::string > driveContent;
+            std::string msg = receiveMSGPack.getContent( );
+            QString content;
+
+            for ( int i = 0; i < msg.length( ); ++i ) {
+                if ( msg[i] == ';' ) {
                     size = i - j;
-                    char *s = ( char * ) malloc( size * sizeof( char ) + 1 ); // +1 for the null terminator
-                    receiveMSGPack.getContent( ).copy( s, size, j );
-                    s[size *
-                      sizeof( char )] = '\0'; // string.copy does not copy the null terminator, you need to add it in order to create the string
-                    driveContent.insert( s );
-                    free( s );
+                    std::string pathFile;
+                    pathFile = msg.substr( j, size );
+                    driveContent.insert( pathFile );
                     ++i;
                     j = i;
                     ++element;
                 }
             }
-
-            QString content;
 
             for ( auto &icontent: driveContent ) {
                 content.append( icontent.c_str( ));
@@ -98,13 +93,18 @@ void SerialPortWidget::messageReceived ( ) {
 
             ui->deviceInfoText->setText( content );
 
-        } else if (receiveMSGPack.getCommand() == ERROR ) {
+        } else if ( receiveMSGPack.getCommand( ) == ERROR ) {
 
             ui->messageReceived->append( "Error!" );
 
+        } else if ( receiveMSGPack.getCommand( ) == READ_COMMAND ) {
+
+            ui->messageReceived->clear( );
+            ui->messageReceived->append( receiveMSGPack.getContent( ).c_str());
+
         } else {
 
-            ui->messageReceived->clear();
+            ui->messageReceived->clear( );
             ui->messageReceived->append( "Success!" );
 
         }
