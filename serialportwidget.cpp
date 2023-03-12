@@ -98,9 +98,14 @@ void SerialPortWidget::messageReceived ( ) {
 
             ui->deviceInfoText->setText( content );
 
+        } else if (receiveMSGPack.getCommand() == ERROR ) {
+
+            ui->messageReceived->append( "Error!" );
+
         } else {
 
-            ui->messageReceived->append( receiveMSGPack.getContent( ).c_str( ));
+            ui->messageReceived->clear();
+            ui->messageReceived->append( "Success!" );
 
         }
     }
@@ -126,7 +131,7 @@ void SerialPortWidget::connectButton ( ) {
     connect( &serialPort, SIGNAL( readyRead( )), this, SLOT( messageReceived( )));
 
     if ( serialPort.isOpen( )) {
-        std::string command = PRINT_COMMANDi;
+        std::string command = PRINT_COMMAND;
         std::string fileName;
         std::string content;
         const MSGPack msgPack = { command, fileName, content };

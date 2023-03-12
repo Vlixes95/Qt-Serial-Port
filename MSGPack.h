@@ -9,6 +9,7 @@ const std::string WRITE_COMMAND = "w";
 const std::string UPDATE_COMMAND = "u";
 const std::string DELETE_COMMAND = "d";
 const std::string PRINT_COMMAND = "p";
+const std::string ERROR = "e";
 
 class MSGPack {
 private:
