@@ -17,7 +17,7 @@ Q_OBJECT
 public:
     explicit SerialPortWidget ( QWidget *parent = nullptr );
 
-    ~SerialPortWidget ( ) override;
+    ~SerialPortWidget ( ) noexcept;
 
     void setReceiveMSGPack ( const MSGPack &msgPack ) { receiveMSGPack = msgPack; }
 

@@ -65,7 +65,8 @@ void SerialPortWidget::messageReceived ( ) {
         bufferReceiver = byteArray;
         MSGPack::Pack( receiveMSGPack, bufferReceiver.toStdString( ));
 
-        if ( receiveMSGPack.getCommand( ) == PRINT_COMMAND ) {
+        ui->messageReceived->clear( );
+        if ( receiveMSGPack.getCommand( )[0] == PRINT ) {
 
             int j = 0;
             int size = 0;
@@ -86,25 +87,24 @@ void SerialPortWidget::messageReceived ( ) {
                 }
             }
 
-            for ( auto &icontent: driveContent ) {
-                content.append( icontent.c_str( ));
+            for ( auto &data: driveContent ) {
+                content.append( data.c_str( ));
                 content.append( "\n" );
             }
 
+            ui->deviceInfoText->clear( );
             ui->deviceInfoText->setText( content );
 
-        } else if ( receiveMSGPack.getCommand( ) == ERROR ) {
+        } else if ( receiveMSGPack.getCommand( )[0] == ERROR ) {
 
             ui->messageReceived->append( "Error!" );
 
-        } else if ( receiveMSGPack.getCommand( ) == READ_COMMAND ) {
+        } else if ( receiveMSGPack.getCommand( )[0] == READ ) {
 
-            ui->messageReceived->clear( );
-            ui->messageReceived->append( receiveMSGPack.getContent( ).c_str());
+            ui->messageReceived->append( receiveMSGPack.getContent( ).c_str( ));
 
         } else {
 
-            ui->messageReceived->clear( );
             ui->messageReceived->append( "Success!" );
 
         }
@@ -131,7 +131,8 @@ void SerialPortWidget::connectButton ( ) {
     connect( &serialPort, SIGNAL( readyRead( )), this, SLOT( messageReceived( )));
 
     if ( serialPort.isOpen( )) {
-        std::string command = PRINT_COMMAND;
+        std::string command;
+        command.push_back( PRINT );
         std::string fileName;
         std::string content;
         const MSGPack msgPack = { command, fileName, content };
@@ -169,14 +170,15 @@ void SerialPortWidget::sendAction ( ) {
     std::string content = ui->contentTextField->toPlainText( ).toStdString( );
 
     std::string command;
-    if ( ui->writeFileCheckbox->isChecked( ))
-        command = WRITE_COMMAND;
-    if ( ui->readFileCheckbox->isChecked( ))
-        command = READ_COMMAND;
-    if ( ui->updateFileCheckbox->isChecked( ))
-        command = UPDATE_COMMAND;
-    if ( ui->deleteFileCheckbox->isChecked( ))
-        command = DELETE_COMMAND;
+    if ( ui->writeFileCheckbox->isChecked( )) {
+        command.push_back( WRITE );
+    } else if ( ui->readFileCheckbox->isChecked( )) {
+        command.push_back( READ );
+    } else if ( ui->updateFileCheckbox->isChecked( )) {
+        command.push_back( UPDATE );
+    } else if ( ui->deleteFileCheckbox->isChecked( )) {
+        command.push_back( DELETE );
+    }
 
     std::string json;
     const MSGPack msgPack( command, fileName, content );

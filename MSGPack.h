@@ -3,13 +3,14 @@
 
 #include <iostream>
 
-// TODO: enum and swich statement
-const std::string READ_COMMAND = "r";
-const std::string WRITE_COMMAND = "w";
-const std::string UPDATE_COMMAND = "u";
-const std::string DELETE_COMMAND = "d";
-const std::string PRINT_COMMAND = "p";
-const std::string ERROR = "e";
+enum COMMAND: char {
+    READ = 'r',
+    WRITE = 'w',
+    UPDATE = 'u',
+    DELETE = 'd',
+    PRINT = 'p',
+    ERROR = 'e'
+};
 
 class MSGPack {
 private:
